@@ -95,8 +95,8 @@ var GcmAndroid = require('react-native-gcm-android');
 GcmAndroid.addEventListener('register', function(token){
   console.log('send gcm token to server', token);
 });
-GcmAndroid.addEventListener('notification', function(token){
-  console.log('receive gcm notification', token);
+GcmAndroid.addEventListener('notification', function(notification){
+  console.log('receive gcm notification', notification);
 });
 GcmAndroid.requestPermissions();
 ```
