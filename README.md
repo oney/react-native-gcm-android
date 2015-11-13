@@ -4,6 +4,8 @@ GCM for React Native Android
 
 ## Installation
 
+- Run `npm install react-native-gcm-android --save`
+
 - In `android/build.gradle`
 ```gradle
 dependencies {
