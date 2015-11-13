@@ -31,7 +31,7 @@ dependencies {
 }
 ```
 
-In `android/app/src/main/AndroidManifest.xml`, add these lines, be sure to change `com.xxx.yyy` to your package
+- In `android/app/src/main/AndroidManifest.xml`, add these lines, be sure to change `com.xxx.yyy` to your package
 ```xml
 <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -75,10 +75,40 @@ In `android/app/src/main/AndroidManifest.xml`, add these lines, be sure to chang
   </service>
   ...
 ```
-In `android/app/src/main/java/com/testoe/MainActivity.java`
+- In `android/app/src/main/java/com/testoe/MainActivity.java`
 ```java
 import com.oney.gcm.GcmPackage;                // <- Add this line
     ...
         .addPackage(new MainReactPackage())
         .addPackage(new GcmPackage())          // <- Add this line
 ```
+
+### GCM API KEY
+By following [Cloud messaging](https://developers.google.com/cloud-messaging/android/client), you can get `google-services.json` file and place it in `android/app` directory
+
+### Usage
+
+```javascript
+var GcmAndroid = require('react-native-gcm-android');
+GcmAndroid.addEventListener('register', function(token){
+  console.log('send gcm token to server', token);
+});
+GcmAndroid.addEventListener('notification', function(token){
+  console.log('receive gcm notification', token);
+});
+GcmAndroid.requestPermissions();
+```
+
+- By default, if the activity is not running, it will show a notification on phone. Otherwise, you can get notification in `GcmAndroid.addEventListener('notification'` listenter.
+
+- You should send GCM notification that has "data" key with following infos
+```json
+{
+  "largeIcon": "ic_launcher",
+  "contentTitle": "Awesome app",
+  "message": "Hi, how are you?",
+  "ticker": "hi...",
+}
+```
+
+- You can remove `<service android:name="com.oney.gcm.RNGcmListenerService"/>` and change to your custom `GcmListenerService` in `AndroidManifest.xml` to handle notifications in java codes
