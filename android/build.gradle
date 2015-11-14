@@ -18,7 +18,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.facebook.react:react-native:0.14.+'
+    compile 'com.facebook.react:react-native:0.11.+'
     compile 'com.google.android.gms:play-services:8.1.0'
     compile 'com.android.support:appcompat-v7:23.0.0'
 }
