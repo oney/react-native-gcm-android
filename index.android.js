@@ -1,15 +1,14 @@
 'use strict';
 
-var GcmModule = require('react-native').NativeModules.GcmModule;
+var {
+  NativeModules,
+  DeviceEventEmitter,
+} = require('react-native');
 
+var GcmModule = NativeModules.GcmModule;
 var Map = require('Map');
-var RCTDeviceEventEmitter = require('RCTDeviceEventEmitter');
-var RCTPushNotificationManager = require('NativeModules').PushNotificationManager;
 var invariant = require('invariant');
-
 var _notifHandlers = new Map();
-var _initialNotification = RCTPushNotificationManager &&
-  RCTPushNotificationManager.initialNotification;
 
 var DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
 var NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
@@ -22,7 +21,7 @@ class GcmAndroid {
     );
     var listener;
     if (type === 'notification') {
-      listener =  RCTDeviceEventEmitter.addListener(
+      listener =  DeviceEventEmitter.addListener(
         DEVICE_NOTIF_EVENT,
         (notifData) => {
           var data = JSON.parse(notifData.dataJSON);
@@ -30,7 +29,7 @@ class GcmAndroid {
         }
       );
     } else if (type === 'register') {
-      listener = RCTDeviceEventEmitter.addListener(
+      listener = DeviceEventEmitter.addListener(
         NOTIF_REGISTER_EVENT,
         (registrationInfo) => {
           handler(registrationInfo.deviceToken);
