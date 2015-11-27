@@ -17,5 +17,8 @@
   ],
   "peerDependencies": {
     "react-native": ">=0.11.0"
+  },
+  "dependencies": {
+    "react-tools": "^0.13.3"
   }
 }
