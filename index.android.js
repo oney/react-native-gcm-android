@@ -6,8 +6,8 @@ var {
 } = require('react-native');
 
 var GcmModule = NativeModules.GcmModule;
-var Map = require('Map');
-var invariant = require('invariant');
+var Map = require('../react-native/Libraries/vendor/core/Map.js');
+var invariant = require('../react-native/node_modules/react-tools/src/shared/vendor/core/invariant.js');
 var _notifHandlers = new Map();
 
 var DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
