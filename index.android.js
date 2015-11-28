@@ -6,8 +6,6 @@ var {
 } = require('react-native');
 
 var GcmModule = NativeModules.GcmModule;
-var Map = require('react-native/Libraries/vendor/core/Map');
-var invariant = require('react-native/node_modules/react-tools/src/shared/vendor/core/invariant');
 var _notifHandlers = new Map();
 
 var DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
@@ -15,10 +13,6 @@ var NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
 
 class GcmAndroid {
   static addEventListener(type: string, handler: Function) {
-    invariant(
-      type === 'notification' || type === 'register',
-      'GcmAndroid only supports `notification` and `register` events'
-    );
     var listener;
     if (type === 'notification') {
       listener =  DeviceEventEmitter.addListener(
@@ -50,10 +44,6 @@ class GcmAndroid {
   }
 
   static removeEventListener(type: string, handler: Function) {
-    invariant(
-      type === 'notification' || type === 'register',
-      'GcmAndroid only supports `notification` and `register` events'
-    );
     var listener = _notifHandlers.get(handler);
     if (!listener) {
       return;
