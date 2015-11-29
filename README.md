@@ -2,6 +2,10 @@
 
 GCM for React Native Android
 
+## Demo
+
+https://github.com/oney/TestGcm
+
 ## Installation
 
 - Run `npm install react-native-gcm-android --save`
