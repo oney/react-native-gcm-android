@@ -32,7 +32,7 @@ dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:0.14.+"
-    compile 'com.google.android.gms:play-services:8.1.0' // <- Add this line
+    compile 'com.google.android.gms:play-services-gcm:8.1.0' // <- Add this line
     compile project(':RNGcmAndroid')                     // <- Add this line
 }
 ```
