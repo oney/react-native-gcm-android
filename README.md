@@ -118,3 +118,7 @@ GcmAndroid.requestPermissions();
 ```
 
 - You can remove `<service android:name="com.oney.gcm.RNGcmListenerService"/>` and change to your custom `GcmListenerService` in `AndroidManifest.xml` to handle notifications in java codes
+
+## Troubleshoot
+
+- Do not add `multiDexEnabled true` in `android/app/build.gradle` even encounter `com.android.dex.DexException: Multiple dex files...` failure.
