@@ -32,7 +32,7 @@ dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
     compile "com.facebook.react:react-native:0.14.+"
-    compile 'com.google.android.gms:play-services:8.1.0' // <- Add this line
+    compile 'com.google.android.gms:play-services-gcm:8.1.0' // <- Add this line
     compile project(':RNGcmAndroid')                     // <- Add this line
 }
 ```
@@ -118,3 +118,7 @@ GcmAndroid.requestPermissions();
 ```
 
 - You can remove `<service android:name="com.oney.gcm.RNGcmListenerService"/>` and change to your custom `GcmListenerService` in `AndroidManifest.xml` to handle notifications in java codes
+
+## Troubleshoot
+
+- Do not add `multiDexEnabled true` in `android/app/build.gradle` even encounter `com.android.dex.DexException: Multiple dex files...` failure.
