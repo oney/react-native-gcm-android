@@ -21,6 +21,8 @@ dependencies {
 ```gradle
 include ':RNGcmAndroid', ':app'
 project(':RNGcmAndroid').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gcm-android/android')
+include ':react-native-system-notification'
+project(':react-native-system-notification').projectDir = new File(settingsDir, '../node_modules/react-native-system-notification/android')
 ```
 
 - In `android/app/build.gradle`
@@ -31,9 +33,10 @@ apply plugin: 'com.google.gms.google-services'           // <- Add this line
 dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
-    compile "com.facebook.react:react-native:0.14.+"
-    compile 'com.google.android.gms:play-services:8.1.0' // <- Add this line
-    compile project(':RNGcmAndroid')                     // <- Add this line
+    compile "com.facebook.react:react-native:0.16.+"
+    compile 'com.google.android.gms:play-services-gcm:8.1.0' // <- Add this line
+    compile project(':RNGcmAndroid')                         // <- Add this line
+    compile project(':react-native-system-notification')     // <- Add this line
 }
 ```
 
@@ -43,6 +46,7 @@ dependencies {
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="com.google.android.c2dm.permission.SEND" />
 <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
 <permission
   android:name="com.xxx.yyy.permission.C2D_MESSAGE"
@@ -72,6 +76,8 @@ dependencies {
     </intent-filter>
   </receiver>
   <service android:name="com.oney.gcm.GcmRegistrationService"/>
+  <service android:name="com.oney.gcm.BackgroundService"></service>
+
   <service
     android:name="com.oney.gcm.RNGcmListenerService"
     android:exported="false" >
@@ -79,14 +85,29 @@ dependencies {
       <action android:name="com.google.android.c2dm.intent.RECEIVE" />
     </intent-filter>
   </service>
+  <receiver android:name="com.oney.gcm.GcmBroadcastReceiver">
+    <intent-filter>
+      <action android:name="com.oney.gcm.GCMReceiveNotification" />
+      </intent-filter>
+  </receiver>
+
+  <receiver android:name="io.neson.react.notification.NotificationEventReceiver" />
+  <receiver android:name="io.neson.react.notification.NotificationPublisher" />
+  <receiver android:name="io.neson.react.notification.SystemBootEventReceiver">
+    <intent-filter>
+      <action android:name="android.intent.action.BOOT_COMPLETED"></action>
+    </intent-filter>
+  </receiver>
   ...
 ```
 - In `android/app/src/main/java/com/testoe/MainActivity.java`
 ```java
-import com.oney.gcm.GcmPackage;                // <- Add this line
+import com.oney.gcm.GcmPackage;                             // <- Add this line
+import io.neson.react.notification.NotificationPackage;     // <- Add this line
     ...
         .addPackage(new MainReactPackage())
-        .addPackage(new GcmPackage())          // <- Add this line
+        .addPackage(new GcmPackage())                       // <- Add this line
+        .addPackage(new NotificationPackage(this))          // <- Add this line
 ```
 
 ### GCM API KEY
