@@ -116,26 +116,52 @@ By following [Cloud messaging](https://developers.google.com/cloud-messaging/and
 ### Usage
 
 ```javascript
+'use strict';
+
+var React = require('react-native');
+var {
+  AppRegistry,
+  View,
+} = React;
+
 var GcmAndroid = require('react-native-gcm-android');
-GcmAndroid.addEventListener('register', function(token){
-  console.log('send gcm token to server', token);
-});
-GcmAndroid.addEventListener('notification', function(notification){
-  console.log('receive gcm notification', notification);
-});
-GcmAndroid.requestPermissions();
-```
+import Notification from 'react-native-system-notification';
 
-- By default, if the activity is not running, it will show a notification on phone. Otherwise, you can get notification in `GcmAndroid.addEventListener('notification'` listenter.
+if (GcmAndroid.launchNotification) {
+  var notification = GcmAndroid.launchNotification;
+  var info = JSON.parse(notification.info);
+  Notification.create({
+    subject: info.subject,
+    message: info.message,
+    sound: 'default',
+  });
+  GcmAndroid.stopService();
+} else {
 
-- You should send GCM notification that has "data" key with following infos
-```json
-{
-  "largeIcon": "ic_launcher",
-  "contentTitle": "Awesome app",
-  "message": "Hi, how are you?",
-  "ticker": "hi...",
+  var {Router, Route, Schema, Animations, TabBar} = require('react-native-router-flux');
+  var YourApp = React.createClass({
+    componentDidMount: function() {
+      GcmAndroid.addEventListener('register', function(token){
+        console.log('send gcm token to server', token);
+      });
+      GcmAndroid.addEventListener('notification', function(notification){
+        console.log('receive gcm notification', notification);
+      });
+      GcmAndroid.requestPermissions();
+    },
+    render: function() {
+      return (
+        ...
+      );
+    }
+  });
+
+  AppRegistry.registerComponent('YourApp', () => YourApp);
 }
 ```
 
-- You can remove `<service android:name="com.oney.gcm.RNGcmListenerService"/>` and change to your custom `GcmListenerService` in `AndroidManifest.xml` to handle notifications in java codes
+There are two situations.
+##### The app is running on the foreground or background.
+`GcmAndroid.launchNotification` is `null`, you can get notification in `GcmAndroid.addEventListener('notification'` listenter.
+##### The app is killed/closed
+`GcmAndroid.launchNotification` is your GCM data. You can create notification with resolving the data by using [react-native-system-notification module](https://github.com/Neson/react-native-system-notification).
