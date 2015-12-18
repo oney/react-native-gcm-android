@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -35,12 +36,17 @@ import android.content.Context;
 public class GcmModule extends ReactContextBaseJavaModule {
     private final static String TAG = GcmModule.class.getCanonicalName();
     private ReactContext mReactContext;
+    private Intent mIntent;
 
-    public GcmModule(ReactApplicationContext reactContext) {
+    public GcmModule(ReactApplicationContext reactContext, Intent intent) {
         super(reactContext);
         mReactContext = reactContext;
-        listenGcmRegistration();
-        listenGcmReceiveNotification();
+        mIntent = intent;
+
+        if (mIntent == null) {
+            listenGcmRegistration();
+            listenGcmReceiveNotification();
+        }
     }
 
     @Override
@@ -51,6 +57,11 @@ public class GcmModule extends ReactContextBaseJavaModule {
     @Override
     public Map<String, Object> getConstants() {
         final Map<String, Object> constants = new HashMap<>();
+        if (mIntent != null) {
+            Bundle bundle = mIntent.getBundleExtra("bundle");
+            String bundleString = convertJSON(bundle);
+            constants.put("launchNotification", bundleString);
+        }
         return constants;
     }
 
@@ -93,11 +104,12 @@ public class GcmModule extends ReactContextBaseJavaModule {
     }
 
     private void listenGcmReceiveNotification() {
-        IntentFilter intentFilter = new IntentFilter("RNGCMReceiveNotification");
+        IntentFilter intentFilter = new IntentFilter("com.oney.gcm.GCMReceiveNotification");
 
         mReactContext.registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "GCMReceiveNotification BroadcastReceiver");
                 Bundle bundle = intent.getBundleExtra("bundle");
 
                 String bundleString = convertJSON(bundle);
@@ -106,6 +118,7 @@ public class GcmModule extends ReactContextBaseJavaModule {
                 params.putString("dataJSON", bundleString);
 
                 sendEvent("remoteNotificationReceived", params);
+                abortBroadcast();
             }
         }, intentFilter);
     }
@@ -113,5 +126,15 @@ public class GcmModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void requestPermissions() {
         mReactContext.startService(new Intent(mReactContext, GcmRegistrationService.class));
+    }
+    @ReactMethod
+    public void stopService() {
+        if (mIntent != null) {
+            new android.os.Handler().postDelayed(new Runnable() {
+                public void run() {
+                    mReactContext.stopService(mIntent);
+                }
+            }, 1000);
+        }
     }
 }

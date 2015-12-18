@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.content.res.Resources;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
+import android.app.ActivityManager.RunningServiceInfo;
 import java.util.List;
 
 import com.google.android.gms.gcm.GcmListenerService;
@@ -29,80 +30,10 @@ public class RNGcmListenerService extends GcmListenerService {
         sendNotification(bundle);
     }
 
-    public Class getMainActivityClass() {
-        try {
-            String packageName = getApplication().getPackageName();
-            return Class.forName(packageName + ".MainActivity");
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    private boolean applicationIsRunning() {
-        ActivityManager activityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
-        List<RunningAppProcessInfo> processInfos = activityManager.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo processInfo : processInfos) {
-            if (processInfo.processName.equals(getApplication().getPackageName())) {
-                if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                    for (String d: processInfo.pkgList) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     private void sendNotification(Bundle bundle) {
-        Resources resources = getApplication().getResources();
-
-        String packageName = getApplication().getPackageName();
-
-        Class intentClass = getMainActivityClass();
-        if (intentClass == null) {
-            return;
-        }
-
-        if (applicationIsRunning()) {
-            Intent i = new Intent("RNGCMReceiveNotification");
-            i.putExtra("bundle", bundle);
-            sendBroadcast(i);
-            return;
-        }
-
-        int resourceId = resources.getIdentifier(bundle.getString("largeIcon"), "mipmap", packageName);
-
-        Intent intent = new Intent(this, intentClass);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
-                PendingIntent.FLAG_ONE_SHOT);
-
-        Bitmap largeIcon = BitmapFactory.decodeResource(resources, resourceId);
-
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setLargeIcon(largeIcon)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle(bundle.getString("contentTitle"))
-                .setContentText(bundle.getString("message"))
-                .setAutoCancel(false)
-                .setSound(defaultSoundUri)
-                .setTicker(bundle.getString("ticker"))
-                .setCategory(NotificationCompat.CATEGORY_CALL)
-                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        Notification notif = notificationBuilder.build();
-        notif.defaults |= Notification.DEFAULT_VIBRATE;
-        notif.defaults |= Notification.DEFAULT_SOUND;
-        notif.defaults |= Notification.DEFAULT_LIGHTS;
-
-        notificationManager.notify(0, notif);
+        Log.d(TAG, "sendNotification");
+        Intent i = new Intent("com.oney.gcm.GCMReceiveNotification");
+        i.putExtra("bundle", bundle);
+        sendOrderedBroadcast(i, null);
     }
 }
