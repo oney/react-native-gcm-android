@@ -36,7 +36,9 @@ class GcmAndroid {
   static requestPermissions() {
     GcmModule.requestPermissions();
   }
-
+  static stopService() {
+    GcmModule.stopService();
+  }
   static abandonPermissions() {
   }
 
@@ -56,5 +58,7 @@ class GcmAndroid {
     this.data = data;
   }
 }
-
+if (GcmModule.launchNotification) {
+  GcmAndroid.launchNotification = JSON.parse(GcmModule.launchNotification);
+}
 module.exports = GcmAndroid;

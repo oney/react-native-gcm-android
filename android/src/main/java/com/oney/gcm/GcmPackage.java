@@ -1,6 +1,7 @@
 package com.oney.gcm;
 
 import android.app.Activity;
+import android.content.Intent;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
@@ -13,8 +14,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class GcmPackage implements ReactPackage {
+    private Intent mIntent = null;
 
-    public GcmPackage(){
+    public GcmPackage() {}
+
+    public GcmPackage(Intent intent) {
+        mIntent = intent;
     }
 
     @Override
@@ -22,7 +27,7 @@ public class GcmPackage implements ReactPackage {
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new GcmModule(reactContext));
+        modules.add(new GcmModule(reactContext, mIntent));
         return modules;
     }
 
