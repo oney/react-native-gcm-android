@@ -127,8 +127,7 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "GCMReceiveNotification BroadcastReceiver");
 
-                if (mReactContext.getCatalystInstance().isDestroyed()) {
-                } else {
+                if (mReactContext.hasActiveCatalystInstance()) {
                     Bundle bundle = intent.getBundleExtra("bundle");
 
                     String bundleString = convertJSON(bundle);
@@ -138,6 +137,7 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
 
                     sendEvent("remoteNotificationReceived", params);
                     abortBroadcast();
+                } else {
                 }
             }
         }, intentFilter);
