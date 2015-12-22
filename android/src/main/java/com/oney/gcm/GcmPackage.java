@@ -15,8 +15,11 @@ import java.util.List;
 
 public class GcmPackage implements ReactPackage {
     private Intent mIntent = null;
+    private Activity mActivity = null;
 
-    public GcmPackage() {}
+    public GcmPackage(Activity activity) {
+        mActivity = activity;
+    }
 
     public GcmPackage(Intent intent) {
         mIntent = intent;
@@ -27,7 +30,7 @@ public class GcmPackage implements ReactPackage {
             ReactApplicationContext reactContext) {
         List<NativeModule> modules = new ArrayList<>();
 
-        modules.add(new GcmModule(reactContext, mIntent));
+        modules.add(new GcmModule(reactContext, mIntent, mActivity));
         return modules;
     }
 

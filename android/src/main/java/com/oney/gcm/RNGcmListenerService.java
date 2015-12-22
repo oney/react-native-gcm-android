@@ -32,6 +32,7 @@ public class RNGcmListenerService extends GcmListenerService {
 
     private void sendNotification(Bundle bundle) {
         Log.d(TAG, "sendNotification");
+
         Intent i = new Intent("com.oney.gcm.GCMReceiveNotification");
         i.putExtra("bundle", bundle);
         sendOrderedBroadcast(i, null);

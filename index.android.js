@@ -10,6 +10,7 @@ var _notifHandlers = new Map();
 
 var DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
 var NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
+var APP_STATE_EVENT = 'GCMAppState';
 
 class GcmAndroid {
   static addEventListener(type: string, handler: Function) {
@@ -39,6 +40,10 @@ class GcmAndroid {
   static stopService() {
     GcmModule.stopService();
   }
+  static createNotification(infos) {
+    GcmModule.createNotification(infos);
+  }
+
   static abandonPermissions() {
   }
 
@@ -61,4 +66,11 @@ class GcmAndroid {
 if (GcmModule.launchNotification) {
   GcmAndroid.launchNotification = JSON.parse(GcmModule.launchNotification);
 }
+GcmAndroid.isForground = true;
+DeviceEventEmitter.addListener(
+  APP_STATE_EVENT,
+  (data) => {
+    GcmAndroid.isForground = data.isForground;
+  }
+);
 module.exports = GcmAndroid;
