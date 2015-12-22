@@ -106,7 +106,7 @@ import com.oney.gcm.GcmPackage;                             // <- Add this line
 import io.neson.react.notification.NotificationPackage;     // <- Add this line
     ...
         .addPackage(new MainReactPackage())
-        .addPackage(new GcmPackage())                       // <- Add this line
+        .addPackage(new GcmPackage(this))                   // <- Add this line
         .addPackage(new NotificationPackage(this))          // <- Add this line
 ```
 
@@ -130,10 +130,12 @@ import Notification from 'react-native-system-notification';
 if (GcmAndroid.launchNotification) {
   var notification = GcmAndroid.launchNotification;
   var info = JSON.parse(notification.info);
-  Notification.create({
+  GcmAndroid.createNotification({
     subject: info.subject,
     message: info.message,
-    sound: 'default',
+    largeIcon: 'ic_launcher',
+    autoCancel: true,
+    ticker: 'new notification!',
   });
   GcmAndroid.stopService();
 } else {
@@ -146,6 +148,17 @@ if (GcmAndroid.launchNotification) {
       });
       GcmAndroid.addEventListener('notification', function(notification){
         console.log('receive gcm notification', notification);
+        console.log('GcmAndroid.isForground', GcmAndroid.isForground);
+        var info = JSON.parse(notification.data.info);
+        if (!GcmAndroid.isForground) {
+          GcmAndroid.createNotification({
+            subject: info.subject,
+            message: info.message,
+            largeIcon: 'ic_launcher',
+            autoCancel: true,
+            ticker: 'new notification!',
+          });
+        }
       });
       GcmAndroid.requestPermissions();
     },
