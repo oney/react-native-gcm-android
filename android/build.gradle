@@ -18,7 +18,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.facebook.react:react-native:0.16.+'
+    compile 'com.facebook.react:react-native:0.17.+'
     compile 'com.google.android.gms:play-services-gcm:8.1.0'
     compile 'com.android.support:appcompat-v7:23.0.0'
     compile project(':react-native-system-notification')

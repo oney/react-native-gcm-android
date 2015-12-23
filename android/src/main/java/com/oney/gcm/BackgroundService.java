@@ -2,14 +2,11 @@ package com.oney.gcm;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
 import com.facebook.react.LifecycleState;
 import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.shell.MainReactPackage;
-import com.facebook.react.ReactRootView;
 
 import io.neson.react.notification.NotificationPackage;
 
@@ -32,7 +29,6 @@ public class BackgroundService extends Service {
                 .setJSMainModuleName("index.android")
                 .addPackage(new MainReactPackage())
                 .addPackage(new GcmPackage(intent))
-                .addPackage(new NotificationPackage(null))
                 .setUseDeveloperSupport(false)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
