@@ -173,8 +173,6 @@ if (GcmAndroid.launchNotification) {
 }
 ```
 
-Before you run `react-native run-android`, you must run `react-native bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/src/main/assets/index.android.bundle`. And every time you modify code, you should run this command again.
-
 There are two situations.
 ##### The app is running on the foreground or background.
 `GcmAndroid.launchNotification` is `null`, you can get notification in `GcmAndroid.addEventListener('notification'` listenter.
