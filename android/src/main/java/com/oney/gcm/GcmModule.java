@@ -45,6 +45,7 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
     private final static String TAG = GcmModule.class.getCanonicalName();
     private ReactContext mReactContext;
     private Intent mIntent;
+    private boolean mIsInForeground;
 
     public GcmModule(ReactApplicationContext reactContext, Intent intent, Activity activity) {
         super(reactContext);
@@ -134,6 +135,7 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
 
                     WritableMap params = Arguments.createMap();
                     params.putString("dataJSON", bundleString);
+                    params.putBoolean("isInForeground", mIsInForeground);
 
                     sendEvent("remoteNotificationReceived", params);
                     abortBroadcast();
@@ -227,16 +229,12 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
 
     @Override
     public void onHostResume() {
-        WritableMap params = Arguments.createMap();
-        params.putBoolean("isForground", true);
-        sendEvent("GCMAppState", params);
+        mIsInForeground = true;
     }
 
     @Override
     public void onHostPause() {
-        WritableMap params = Arguments.createMap();
-        params.putBoolean("isForground", false);
-        sendEvent("GCMAppState", params);
+        mIsInForeground = false;
     }
 
     @Override
