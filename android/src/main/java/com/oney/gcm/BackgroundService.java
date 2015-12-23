@@ -8,6 +8,8 @@ import android.util.Log;
 import com.facebook.react.LifecycleState;
 import com.facebook.react.ReactInstanceManager;
 
+import java.lang.reflect.Field;
+
 import io.neson.react.notification.NotificationPackage;
 
 public class BackgroundService extends Service {
@@ -29,7 +31,7 @@ public class BackgroundService extends Service {
                 .setJSMainModuleName("index.android")
                 .addPackage(new MainReactPackage())
                 .addPackage(new GcmPackage(intent))
-                .setUseDeveloperSupport(false)
+                .setUseDeveloperSupport(getBuildConfigDEBUG())
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
         mReactInstanceManager.createReactContextInBackground();
@@ -44,5 +46,32 @@ public class BackgroundService extends Service {
         mReactInstanceManager.onPause();
         mReactInstanceManager.onDestroy();
         mReactInstanceManager = null;
+    }
+
+    private Class getBuildConfigClass() {
+        try {
+            String packageName = getPackageName();
+
+            return Class.forName(packageName + ".BuildConfig");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    private boolean getBuildConfigDEBUG() {
+        Class klass = getBuildConfigClass();
+        for (Field f : klass.getDeclaredFields()) {
+            Log.d(TAG, "DeclaredField: " + f.getName());
+            if (f.getName().equals("DEBUG")) {
+                try {
+                    Log.d(TAG, "DeclaredField value: " + f.getBoolean(this));
+                    return f.getBoolean(this);
+                } catch (IllegalAccessException e) {
+                    Log.d(TAG, "DeclaredField fail");
+                    e.printStackTrace();
+                }
+            }
+        }
+        return false;
     }
 }
