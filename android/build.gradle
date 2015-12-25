@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 23
@@ -21,5 +20,4 @@ dependencies {
     compile 'com.facebook.react:react-native:0.17.+'
     compile 'com.google.android.gms:play-services-gcm:8.1.0'
     compile 'com.android.support:appcompat-v7:23.0.0'
-    compile project(':react-native-system-notification')
 }

@@ -16,7 +16,6 @@
     "GCM"
   ],
   "peerDependencies": {
-    "react-native": ">=0.11.0",
-    "react-native-system-notification": "^0.0.7"
+    "react-native": ">=0.11.0"
   }
 }
