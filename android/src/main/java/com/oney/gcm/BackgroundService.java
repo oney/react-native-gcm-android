@@ -10,6 +10,8 @@ import com.facebook.react.ReactInstanceManager;
 
 import java.lang.reflect.Field;
 
+import io.neson.react.notification.NotificationPackage;
+
 public class BackgroundService extends Service {
     private static final String TAG = "BackgroundService";
     private ReactInstanceManager mReactInstanceManager;
