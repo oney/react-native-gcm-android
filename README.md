@@ -8,7 +8,7 @@ https://github.com/oney/TestGcm
 
 ## Installation
 
-- Run `npm install react-native-gcm-android --save`
+- Run `npm install react-native-gcm-android react-native-system-notification --save`
 
 - In `android/build.gradle`
 ```gradle
@@ -21,6 +21,7 @@ dependencies {
 ```gradle
 include ':RNGcmAndroid', ':app'
 project(':RNGcmAndroid').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-gcm-android/android')
+
 include ':react-native-system-notification'
 project(':react-native-system-notification').projectDir = new File(settingsDir, '../node_modules/react-native-system-notification/android')
 ```
