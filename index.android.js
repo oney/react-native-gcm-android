@@ -18,7 +18,7 @@ class GcmAndroid {
       listener =  DeviceEventEmitter.addListener(
         DEVICE_NOTIF_EVENT,
         (notifData) => {
-          GcmAndroid.isForground = notifData.isInForeground;
+          GcmAndroid.isInForeground = notifData.isInForeground;
           var data = JSON.parse(notifData.dataJSON);
           handler(new GcmAndroid(data));
         }
@@ -66,6 +66,6 @@ class GcmAndroid {
 if (GcmModule.launchNotification) {
   GcmAndroid.launchNotification = JSON.parse(GcmModule.launchNotification);
 }
-GcmAndroid.isForground = true;
+GcmAndroid.isInForeground = true;
 
 module.exports = GcmAndroid;

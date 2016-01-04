@@ -149,9 +149,9 @@ if (GcmAndroid.launchNotification) {
       });
       GcmAndroid.addEventListener('notification', function(notification){
         console.log('receive gcm notification', notification);
-        console.log('GcmAndroid.isForground', GcmAndroid.isForground);
+        console.log('GcmAndroid.isInForeground', GcmAndroid.isInForeground);
         var info = JSON.parse(notification.data.info);
-        if (!GcmAndroid.isForground) {
+        if (!GcmAndroid.isInForeground) {
           GcmAndroid.createNotification({
             subject: info.subject,
             message: info.message,
