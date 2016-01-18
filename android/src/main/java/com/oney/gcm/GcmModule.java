@@ -192,20 +192,21 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
             return;
         }
 
-        int resourceId = resources.getIdentifier(infos.getString("largeIcon"), "mipmap", packageName);
-
+        int largeIconResourceId = resources.getIdentifier(infos.getString("largeIcon"), "mipmap", packageName);
+        int smallIconResourceId = resources.getIdentifier(infos.getString("smallIcon"), "mipmap", packageName);
+        
         Intent intent = new Intent(mReactContext, intentClass);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(mReactContext, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(resources, resourceId);
+        Bitmap largeIcon = BitmapFactory.decodeResource(resources, largeIconResourceId);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mReactContext)
                 .setLargeIcon(largeIcon)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setSmallIcon(smallIconResourceId)
                 .setContentTitle(infos.getString("subject"))
                 .setContentText(infos.getString("message"))
                 .setAutoCancel(infos.getBoolean("autoCancel"))
