@@ -183,3 +183,4 @@ There are two situations.
 ## Troubleshoot
 
 - Do not add `multiDexEnabled true` in `android/app/build.gradle` even encounter `com.android.dex.DexException: Multiple dex files...` failure.
+- Make sure to install Google Play service in Genymotion simulator before testing.
