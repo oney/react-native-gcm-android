@@ -174,11 +174,13 @@ if (GcmAndroid.launchNotification) {
 }
 ```
 
-There are two situations.
+* There are two situations.
 ##### The app is running on the foreground or background.
 `GcmAndroid.launchNotification` is `null`, you can get notification in `GcmAndroid.addEventListener('notification'` listenter.
 ##### The app is killed/closed
 `GcmAndroid.launchNotification` is your GCM data. You can create notification with resolving the data by using [react-native-system-notification module](https://github.com/Neson/react-native-system-notification).
+
+* You can get info when clicking notification in `DeviceEventEmitter.addListener('sysNotificationClick'`. See [react-native-system-notification](https://github.com/Neson/react-native-system-notification) to get more informations about how to create notification 
 
 ## Troubleshoot
 
