@@ -43,19 +43,17 @@ import android.net.Uri;
 
 public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
     private final static String TAG = GcmModule.class.getCanonicalName();
-    private ReactContext mReactContext;
     private Intent mIntent;
     private boolean mIsInForeground;
 
-    public GcmModule(ReactApplicationContext reactContext, Intent intent, Activity activity) {
+    public GcmModule(ReactApplicationContext reactContext, Intent intent) {
         super(reactContext);
-        mReactContext = reactContext;
         mIntent = intent;
 
-        if (activity != null) {
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mReactContext);
+        if (getReactApplicationContext().hasCurrentActivity()) {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(reactContext);
             SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("GcmMainActivity", activity.getClass().getSimpleName());
+            editor.putString("GcmMainActivity", getCurrentActivity().getClass().getSimpleName());
             editor.apply();
         }
 
@@ -83,7 +81,7 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
     }
 
     private void sendEvent(String eventName, Object params) {
-        mReactContext
+        getReactApplicationContext()
             .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
             .emit(eventName, params);
     }
@@ -91,7 +89,7 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
     private void listenGcmRegistration() {
         IntentFilter intentFilter = new IntentFilter("RNGCMRegisteredToken");
 
-        mReactContext.registerReceiver(new BroadcastReceiver() {
+        getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String token = intent.getStringExtra("token");
@@ -123,12 +121,12 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
     private void listenGcmReceiveNotification() {
         IntentFilter intentFilter = new IntentFilter("com.oney.gcm.GCMReceiveNotification");
 
-        mReactContext.registerReceiver(new BroadcastReceiver() {
+        getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 Log.d(TAG, "GCMReceiveNotification BroadcastReceiver");
 
-                if (mReactContext.hasActiveCatalystInstance()) {
+                if (getReactApplicationContext().hasActiveCatalystInstance()) {
                     Bundle bundle = intent.getBundleExtra("bundle");
 
                     String bundleString = convertJSON(bundle);
@@ -147,23 +145,23 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
 
     @ReactMethod
     public void requestPermissions() {
-        mReactContext.startService(new Intent(mReactContext, GcmRegistrationService.class));
+        getReactApplicationContext().startService(new Intent(getReactApplicationContext(), GcmRegistrationService.class));
     }
     @ReactMethod
     public void stopService() {
         if (mIntent != null) {
             new android.os.Handler().postDelayed(new Runnable() {
                 public void run() {
-                    mReactContext.stopService(mIntent);
+                    getReactApplicationContext().stopService(mIntent);
                 }
             }, 1000);
         }
     }
     private Class getMainActivityClass() {
         try {
-            String packageName = mReactContext.getPackageName();
+            String packageName = getReactApplicationContext().getPackageName();
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mReactContext);
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getReactApplicationContext());
             String activityString = preferences.getString("GcmMainActivity", null);
             if (activityString == null) {
                 Log.d(TAG, "GcmMainActivity is null");
@@ -179,9 +177,9 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
 
     @ReactMethod
     public void createNotification(ReadableMap infos) {
-        Resources resources = mReactContext.getResources();
+        Resources resources = getReactApplicationContext().getResources();
 
-        String packageName = mReactContext.getPackageName();
+        String packageName = getReactApplicationContext().getPackageName();
 
         Class intentClass = getMainActivityClass();
 
@@ -197,16 +195,16 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
         if(infos.hasKey("smallIcon")){
             smallIconResourceId = resources.getIdentifier(infos.getString("smallIcon"), "mipmap", packageName);
         }
-        Intent intent = new Intent(mReactContext, intentClass);
+        Intent intent = new Intent(getReactApplicationContext(), intentClass);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(mReactContext, 0, intent,
+        PendingIntent pendingIntent = PendingIntent.getActivity(getReactApplicationContext(), 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(resources, largeIconResourceId);
+        Bitmap largeIcon = BitmapFactory.decodeResource(resources, resourceId);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(mReactContext)
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getReactApplicationContext())
                 .setLargeIcon(largeIcon)
                 .setSmallIcon(smallIconResourceId)
                 .setContentTitle(infos.getString("subject"))
@@ -220,7 +218,7 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
                 .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
-                (NotificationManager) mReactContext.getSystemService(Context.NOTIFICATION_SERVICE);
+                (NotificationManager) getReactApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
 
         Notification notif = notificationBuilder.build();
         notif.defaults |= Notification.DEFAULT_VIBRATE;

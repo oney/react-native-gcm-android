@@ -1,6 +1,6 @@
 {
   "name": "react-native-gcm-android",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/oney/react-native-gcm-android.git"
@@ -17,6 +17,6 @@
   ],
   "peerDependencies": {
     "react-native": ">=0.11.0",
-    "react-native-system-notification": "^0.0.7"
+    "react-native-system-notification": "^0.0.8"
   }
 }

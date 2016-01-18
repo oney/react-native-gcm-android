@@ -14,7 +14,6 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "sadfjasidfjliasf444");
         Bundle bundle = intent.getBundleExtra("bundle");
 
         Intent newIntent = new Intent(context, BackgroundService.class);

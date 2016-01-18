@@ -31,6 +31,7 @@ public class BackgroundService extends Service {
                 .setJSMainModuleName("index.android")
                 .addPackage(new MainReactPackage())
                 .addPackage(new GcmPackage(intent))
+                .addPackage(new NotificationPackage(null))
                 .setUseDeveloperSupport(getBuildConfigDEBUG())
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
@@ -61,13 +62,10 @@ public class BackgroundService extends Service {
     private boolean getBuildConfigDEBUG() {
         Class klass = getBuildConfigClass();
         for (Field f : klass.getDeclaredFields()) {
-            Log.d(TAG, "DeclaredField: " + f.getName());
             if (f.getName().equals("DEBUG")) {
                 try {
-                    Log.d(TAG, "DeclaredField value: " + f.getBoolean(this));
                     return f.getBoolean(this);
                 } catch (IllegalAccessException e) {
-                    Log.d(TAG, "DeclaredField fail");
                     e.printStackTrace();
                 }
             }

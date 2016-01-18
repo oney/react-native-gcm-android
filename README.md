@@ -47,6 +47,7 @@ dependencies {
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="com.google.android.c2dm.permission.SEND" />
 <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+<uses-permission android:name="android.permission.GET_TASKS" /> 
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
 <permission
@@ -107,7 +108,7 @@ import com.oney.gcm.GcmPackage;                             // <- Add this line
 import io.neson.react.notification.NotificationPackage;     // <- Add this line
     ...
         .addPackage(new MainReactPackage())
-        .addPackage(new GcmPackage(this))                   // <- Add this line
+        .addPackage(new GcmPackage())                       // <- Add this line
         .addPackage(new NotificationPackage(this))          // <- Add this line
 ```
 
@@ -123,6 +124,7 @@ var React = require('react-native');
 var {
   AppRegistry,
   View,
+  DeviceEventEmitter,
 } = React;
 
 var GcmAndroid = require('react-native-gcm-android');
@@ -131,12 +133,9 @@ import Notification from 'react-native-system-notification';
 if (GcmAndroid.launchNotification) {
   var notification = GcmAndroid.launchNotification;
   var info = JSON.parse(notification.info);
-  GcmAndroid.createNotification({
+  Notification.create({
     subject: info.subject,
     message: info.message,
-    largeIcon: 'ic_launcher',
-    autoCancel: true,
-    ticker: 'new notification!',
   });
   GcmAndroid.stopService();
 } else {
@@ -149,18 +148,19 @@ if (GcmAndroid.launchNotification) {
       });
       GcmAndroid.addEventListener('notification', function(notification){
         console.log('receive gcm notification', notification);
-        console.log('GcmAndroid.isInForeground', GcmAndroid.isInForeground);
         var info = JSON.parse(notification.data.info);
         if (!GcmAndroid.isInForeground) {
-          GcmAndroid.createNotification({
+          Notification.create({
             subject: info.subject,
             message: info.message,
-            largeIcon: 'ic_launcher',
-            autoCancel: true,
-            ticker: 'new notification!',
           });
         }
       });
+
+      DeviceEventEmitter.addListener('sysNotificationClick', function(e) {
+        console.log('sysNotificationClick', e);
+      });
+
       GcmAndroid.requestPermissions();
     },
     render: function() {
@@ -174,11 +174,13 @@ if (GcmAndroid.launchNotification) {
 }
 ```
 
-There are two situations.
+* There are two situations.
 ##### The app is running on the foreground or background.
 `GcmAndroid.launchNotification` is `null`, you can get notification in `GcmAndroid.addEventListener('notification'` listenter.
 ##### The app is killed/closed
 `GcmAndroid.launchNotification` is your GCM data. You can create notification with resolving the data by using [react-native-system-notification module](https://github.com/Neson/react-native-system-notification).
+
+* You can get info when clicking notification in `DeviceEventEmitter.addListener('sysNotificationClick'`. See [react-native-system-notification](https://github.com/Neson/react-native-system-notification) to get more informations about how to create notification 
 
 ## Troubleshoot
 
