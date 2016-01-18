@@ -190,8 +190,11 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
             return;
         }
 
-        int resourceId = resources.getIdentifier(infos.getString("largeIcon"), "mipmap", packageName);
-
+        int largeIconResourceId = resources.getIdentifier(infos.getString("largeIcon"), "mipmap", packageName);
+        int smallIconResourceId = android.R.drawable.ic_dialog_info;
+        if(infos.hasKey("smallIcon")){
+            smallIconResourceId = resources.getIdentifier(infos.getString("smallIcon"), "mipmap", packageName);
+        }
         Intent intent = new Intent(getReactApplicationContext(), intentClass);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(getReactApplicationContext(), 0, intent,
@@ -203,7 +206,7 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getReactApplicationContext())
                 .setLargeIcon(largeIcon)
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setSmallIcon(smallIconResourceId)
                 .setContentTitle(infos.getString("subject"))
                 .setContentText(infos.getString("message"))
                 .setAutoCancel(infos.getBoolean("autoCancel"))
