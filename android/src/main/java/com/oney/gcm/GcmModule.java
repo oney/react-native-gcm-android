@@ -193,8 +193,10 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
         }
 
         int largeIconResourceId = resources.getIdentifier(infos.getString("largeIcon"), "mipmap", packageName);
-        int smallIconResourceId = resources.getIdentifier(infos.getString("smallIcon"), "mipmap", packageName);
-        
+        int smallIconResourceId = android.R.drawable.ic_dialog_info;
+        if(infos.hasKey("smallIcon")){
+            smallIconResourceId = resources.getIdentifier(infos.getString("smallIcon"), "mipmap", packageName);
+        }
         Intent intent = new Intent(mReactContext, intentClass);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(mReactContext, 0, intent,
