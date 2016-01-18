@@ -1,6 +1,6 @@
 {
   "name": "react-native-gcm-android",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/oney/react-native-gcm-android.git"
