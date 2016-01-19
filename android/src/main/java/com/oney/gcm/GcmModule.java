@@ -200,7 +200,7 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
         PendingIntent pendingIntent = PendingIntent.getActivity(getReactApplicationContext(), 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Bitmap largeIcon = BitmapFactory.decodeResource(resources, resourceId);
+        Bitmap largeIcon = BitmapFactory.decodeResource(resources, largeIconResourceId);
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
