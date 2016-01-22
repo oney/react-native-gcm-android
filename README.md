@@ -87,7 +87,9 @@ dependencies {
       <action android:name="com.google.android.c2dm.intent.RECEIVE" />
     </intent-filter>
   </service>
-  <receiver android:name="com.oney.gcm.GcmBroadcastReceiver">
+  <receiver
+    android:exported="false"
+    android:name="com.oney.gcm.GcmBroadcastReceiver">
     <intent-filter>
       <action android:name="com.oney.gcm.GCMReceiveNotification" />
       </intent-filter>
@@ -145,6 +147,9 @@ if (GcmAndroid.launchNotification) {
     componentDidMount: function() {
       GcmAndroid.addEventListener('register', function(token){
         console.log('send gcm token to server', token);
+      });
+      GcmAndroid.addEventListener('registerError', function(error){
+        console.log('registerError', error.message);
       });
       GcmAndroid.addEventListener('notification', function(notification){
         console.log('receive gcm notification', notification);
