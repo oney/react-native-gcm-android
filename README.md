@@ -8,7 +8,7 @@ https://github.com/oney/TestGcm
 
 ## Installation
 
-- Run `npm install react-native-gcm-android react-native-system-notification --save`
+- Run `npm install react-native-gcm-android --save`
 
 - In `android/build.gradle`
 ```gradle
