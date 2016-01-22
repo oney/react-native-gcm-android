@@ -10,6 +10,7 @@ var _notifHandlers = new Map();
 
 var DEVICE_NOTIF_EVENT = 'remoteNotificationReceived';
 var NOTIF_REGISTER_EVENT = 'remoteNotificationsRegistered';
+var NOTIF_REGISTER_ERROR_EVENT = 'remoteNotificationsRegisteredError';
 
 class GcmAndroid {
   static addEventListener(type: string, handler: Function) {
@@ -28,6 +29,14 @@ class GcmAndroid {
         NOTIF_REGISTER_EVENT,
         (registrationInfo) => {
           handler(registrationInfo.deviceToken);
+        }
+      );
+    } else if (type === 'registerError') {
+      listener = DeviceEventEmitter.addListener(
+        NOTIF_REGISTER_ERROR_EVENT,
+        (info) => {
+          var error = new Error(info.message);
+          handler(error);
         }
       );
     }
@@ -63,6 +72,7 @@ class GcmAndroid {
     this.data = data;
   }
 }
+console.log('GcmAndroid.launchNotification internal', GcmAndroid.launchNotification);
 if (GcmModule.launchNotification) {
   GcmAndroid.launchNotification = JSON.parse(GcmModule.launchNotification);
 }

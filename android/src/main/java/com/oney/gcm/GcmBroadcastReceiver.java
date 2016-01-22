@@ -14,10 +14,13 @@ public class GcmBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "onReceive");
+
         Bundle bundle = intent.getBundleExtra("bundle");
 
         Intent newIntent = new Intent(context, BackgroundService.class);
         newIntent.putExtra("bundle", bundle);
         context.startService(newIntent);
+        abortBroadcast();
     }
 }

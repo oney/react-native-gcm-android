@@ -50,6 +50,8 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
         super(reactContext);
         mIntent = intent;
 
+        Log.d(TAG, "mIntent is null: " + (mIntent == null));
+
         if (getReactApplicationContext().hasCurrentActivity()) {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(reactContext);
             SharedPreferences.Editor editor = preferences.edit();
@@ -75,6 +77,7 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
         if (mIntent != null) {
             Bundle bundle = mIntent.getBundleExtra("bundle");
             String bundleString = convertJSON(bundle);
+            Log.d(TAG, "bundleString: " + bundleString);
             constants.put("launchNotification", bundleString);
         }
         return constants;
@@ -87,16 +90,27 @@ public class GcmModule extends ReactContextBaseJavaModule implements LifecycleEv
     }
 
     private void listenGcmRegistration() {
-        IntentFilter intentFilter = new IntentFilter("RNGCMRegisteredToken");
+        IntentFilter intentFilter = new IntentFilter("RNGcmRegistrationServiceResult");
 
         getReactApplicationContext().registerReceiver(new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String token = intent.getStringExtra("token");
-                WritableMap params = Arguments.createMap();
-                params.putString("deviceToken", token);
+                Bundle bundle = intent.getExtras();
+                boolean success = bundle.getBoolean("success");
+                if (success) {
+                    String token = bundle.getString("token");
+                    WritableMap params = Arguments.createMap();
+                    params.putString("deviceToken", token);
 
-                sendEvent("remoteNotificationsRegistered", params);
+                    sendEvent("remoteNotificationsRegistered", params);
+                } else {
+                    String message = bundle.getString("message");
+                    WritableMap params = Arguments.createMap();
+                    params.putString("message", message);
+
+                    sendEvent("remoteNotificationsRegisteredError", params);
+
+                }
             }
         }, intentFilter);
     }
